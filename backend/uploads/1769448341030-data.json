@@ -1,0 +1,17 @@
+[
+  {
+    "date": "date",
+    "category": "study",
+    "amount": 200
+  },
+  {
+    "date": "date",
+    "category": "food",
+    "amount": 500
+  },
+  {
+    "date": "date",
+    "category": "travel",
+    "amount": 200
+  }
+]
