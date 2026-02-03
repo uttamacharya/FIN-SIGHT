@@ -12,3 +12,8 @@ export const uploadFileApi=(formData)=>{
 export const getUploadApi=()=>{
     return api.get("/upload");
 }
+
+
+export const deleteApi=(uploadId)=>{
+    return api.delete(`/upload/${uploadId}`)
+}

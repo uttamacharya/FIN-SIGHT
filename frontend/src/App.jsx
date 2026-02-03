@@ -1,46 +1,59 @@
-import {Routes, Route, Navigate} from "react-router-dom"
-// import './App.css'
-import { useAuth } from './hooks/UseAuth'
-import Login from './pages/Login'
-import Home from './pages/Home'
-import Layout from './components/layout/Layout'
-import { ToastContainer, toast } from "react-toastify";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from "./hooks/UseAuth";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Home from "./pages/Home";
+import Layout from "./components/layout/Layout";
+import ThemePage from "./pages/ThemePage";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import UploadPages from "./pages/UploadPages"
 import Analysis from "./pages/Analysis";
-
+import { useThemeStore } from "./utils/ThemeSelector/UseThemeStore";
 
 function App() {
-  const {isAuthenticated}= useAuth()
+  const { isAuthenticated } = useAuth();
+  const { theme } = useThemeStore();
 
   return (
     <>
-    <Routes>
-      {/* this is public route */}
-      <Route
-       path="/login"
-       element={
-        isAuthenticated ? <Navigate to="/" />: <Login/>
-       }
-      ></Route>
-      {/* now protected route */}
-      <Route 
-        path="/"
-        element={
-          isAuthenticated ? <Layout/>: <Navigate to="/login" />
-        }
+      <div
+        className="min-h-screen bg-base-200 transition-colors duration-300"
+        data-theme={theme}
       >
-        <Route index element={<Home />} />
-        <Route path="upload" element={<UploadPages/>}/>
-        <Route
-          path="analysis/:uploadId"
-          element={<Analysis />}
-        />
-      </Route>
-    </Routes>
-    <ToastContainer position="top-right" autoClose={3000} />
+        <Routes>
+          <Route path="/theme" element={<ThemePage />} />
+          <Route
+            path="/signup"
+            element={
+              isAuthenticated ? <Navigate to="/" /> : <Signup/>
+            }
+            />
+          <Route
+            path="/login"
+            element={
+              isAuthenticated ? <Navigate to="/" /> : <Login />
+            }
+          />
+
+          {/* Protected routes */}
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? <Layout /> : <Navigate to="/login" />
+            }
+          >
+            <Route index element={<Home />} />
+            <Route
+              path="analysis/:uploadId"
+              element={<Analysis />}
+            />
+          </Route>
+        </Routes>
+      </div>
+
+      <ToastContainer position="top-right" autoClose={3000} />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

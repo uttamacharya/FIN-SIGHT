@@ -10,10 +10,10 @@ const getUserByIdService= async(userId)=>{
         throw new Error("User not found")
     }
     // password should not be in response
-    console.log("USER FROM DB:", user)
+    // console.log("USER FROM DB:", user)
 
     delete user.password
-    console.log("USER FROM DB:", user)
+    // console.log("USER FROM DB:", user)
 
     return user
 

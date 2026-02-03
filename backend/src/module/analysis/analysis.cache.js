@@ -19,16 +19,16 @@ export const withAnalysisCache = async ({
   const hash = hashParams(params);
   const cacheKey = `${keyBase}:${hash}`;
 
-  // 1️⃣ try cache
+  // try cache
   const cached = await redis.get(cacheKey);
   if (cached) {
     return JSON.parse(cached);
   }
 
-  // 2️⃣ fetch from DB
+  // fetch from DB
   const data = await fetcher();
 
-  // 3️⃣ save to redis (ioredis way)
+  // save to redis (ioredis way)
   await redis.set(
     cacheKey,
     JSON.stringify(data),

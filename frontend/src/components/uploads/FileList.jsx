@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
 
-const FileList = ({ uploads, loading, error }) => {
+const FileList = ({ uploads, loading, error, onDelete }) => {
   if (loading) return <p>Loading uploads...</p>;
   if (error) return <p className="text-error">{error}</p>;
 
   return (
-    <div className="mt-6">
-      <h2 className="text-lg font-semibold mb-2">Your Files</h2>
+    <div className="mt-6 min-h-screen shadow-lg">
+      <div className="card card-body top-3 ">
+        <h1 className="text-lg font-semibold mb-2 text-gray-900">File Manager</h1>
+      </div>
+      
 
       {uploads.length === 0 ? (
         <p>No uploads yet</p>
@@ -15,11 +18,11 @@ const FileList = ({ uploads, loading, error }) => {
           {uploads.map((u) => (
             <li
               key={u.id}
-              className="p-3 bg-base-200 rounded flex justify-between items-center"
+              className="p-4 rounded flex justify-between items-center bg-slate-100 hover:shadow-lg hover:bg-blue-200 hover:border-blue-500"
             >
-              {/* FILE INFO */}
+              {/* file info */}
               <div>
-                <div className="font-medium">
+                <div className="font-medium text-gray-950">
                   {u.original_filename}
                 </div>
                 <div className="text-sm text-gray-500">
@@ -27,13 +30,20 @@ const FileList = ({ uploads, loading, error }) => {
                 </div>
               </div>
 
-              {/* 👉 ANALYZE LINK */}
+              {/*  analyze link */}
               <Link
                 to={`/analysis/${u.id}`}
                 className="text-blue-600 hover:underline font-medium"
               >
                 Analyze →
               </Link>
+              <button
+               className="btn btn-warning"
+               onClick={()=>{
+                if(window.confirm("Are You sure you want to delete this file?")){
+                  onDelete(u.id)
+                }
+               }}>Delete</button>
             </li>
           ))}
         </ul>

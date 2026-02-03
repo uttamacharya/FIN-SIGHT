@@ -34,7 +34,7 @@ const generateTokens = (userId) => {
 const signupService = async ({ name, email, password, is_email_verified }) => {
     const existingUser = await checkUserByEmail(email)
     if (existingUser) {
-        throw new AppError("Users already exists with this email ID")
+        throw new AppError("Users already exists with this email ID",409)
 
     }
 
@@ -65,9 +65,9 @@ const signupService = async ({ name, email, password, is_email_verified }) => {
         "EX",
         30*24*60 * 60
     )
-
+    const { password: _, ...safeUser } = user;
     return {
-        user,
+        user:safeUser,
         accessToken,
         refreshToken
     }

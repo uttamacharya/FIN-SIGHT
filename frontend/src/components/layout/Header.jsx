@@ -1,17 +1,17 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../hooks/UseAuth'
 import { useState } from 'react'
+import { THEMES } from '../../utils/ThemeSelector/Theme'
 
 function Header() {
    const { user, logout } = useAuth()
    const [menuOpen, setMenuOpen] = useState(false)
    return (<>
-      <div className="navbar bg-base-200 shadow sticky top-0">
+      <div className="navbar bg-base-200 shadow sticky top-0 z-30 backdrop:blur-lg">
          <div className="flex-1">
             <Link to="/" className='text-xl font-bold'>Finsight</Link>
          </div>
          <div className="hidden md:flex gap-6 items-center">
-            <Link to="/upload" className='btn btn-ghost btn-sm'>Upload</Link>
             <Link to="/contact" className='btn btn-ghost btn-sm'>Contact</Link>
 
             {/* setting dropdown */}
@@ -19,7 +19,13 @@ function Header() {
                <label tabIndex={0} className='btn btn-ghost btn-sm'>Setting</label>
                <ul tabIndex={0} className='dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-52 mt-8 text-gray-700 font-bold '>
                   <li><Link to="/profile" className='hover:bg-base-50'>Profile</Link></li>
-                  <li><button>Theme</button></li>
+
+                  {/* <p>theme selector</p> */}
+                  <li>
+                     <Link to={"/theme"}>Theme</Link>
+                  </li>
+                  
+
                   <li><button onClick={logout} className='hover:bg-red-300'>Logout</button></li>
                </ul>
             </div>

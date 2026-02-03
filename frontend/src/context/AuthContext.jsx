@@ -31,6 +31,13 @@ export const AuthProvider=({children})=>{
         initAuth();
     },[])
 
+    const signUp=({user, accessToken})=>{
+        setUser(user);
+        setAccessTokenState(accessToken);
+        setAccessToken(accessToken)
+        localStorage.setItem("user", JSON.stringify(user))
+    }
+
     const login= ({user, accessToken})=>{
         setUser(user);
         setAccessTokenState(accessToken);
@@ -46,6 +53,7 @@ export const AuthProvider=({children})=>{
 
     const value={
         user,
+        signUp,
         isAuthenticated: !!user,
         login,
         logout

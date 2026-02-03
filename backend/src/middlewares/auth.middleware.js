@@ -22,7 +22,7 @@ const authMiddleware = (req, res, next) => {
       token,
       process.env.JWT_ACCESS_SECRET
     )
-    // console.log("🔑 DECODED TOKEN:", decoded)
+    // console.log(" DECODED TOKEN:", decoded)
 
     // attach user to request
     req.user = {

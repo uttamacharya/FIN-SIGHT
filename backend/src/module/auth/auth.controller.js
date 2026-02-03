@@ -11,7 +11,7 @@ const signUp=async(req, res, next)=>{
         res.cookie(AUTH_CONSTANTS.REFRESH_TOKEN_COOKIE, refreshToken, {
             httpOnly: true, //js can not eccess
             secure:process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            sameSite: "lax",
             maxAge: 30*24*60*60*1000
         })
         res.status(201).json({
@@ -53,7 +53,7 @@ const login= async(req, res, next)=>{
     }
 }
 
-// uses refreshtoken cookie to issue new access token
+// uses refresh token cookie to issue new access token
 const refreshToken=async(req,res,next)=>{
     try {
         const refreshToken=req.cookies[AUTH_CONSTANTS.REFRESH_TOKEN_COOKIE]

@@ -1,109 +1,110 @@
-import React from 'react'
-import { useState } from 'react'
-import { useAuth } from "../hooks/UseAuth"
-import { loginApi } from "../api/auth.api"
-import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Mail, Lock, LogIn } from "lucide-react";
+import { useAuth } from "../hooks/UseAuth";
+import { loginApi } from "../api/auth.api";
+import { toast } from "react-toastify";
 
 function Login() {
-  const { login } = useAuth()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [fieldErrors, setFieldErrors] = useState([])
-  const navigate= useNavigate();
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState([]);
+
   const handleSubmit = async (e) => {
-    console.log("submit clicked")
-    e.preventDefault()
-    setLoading(true)
-    // setEmail(null)
+    e.preventDefault();
+    setLoading(true);
+    setFieldErrors([]);
+
     try {
       const res = await loginApi({ email, password });
+
       login({
         user: res.data.user,
-        accessToken: res.data.accessToken
-      })
-      toast.success("Login successfull")
-      setTimeout(()=>{
-         console.log("NAVIGATING TO HOME");
-        navigate("/")
-      },2000)
+        accessToken: res.data.accessToken,
+      });
+
+      toast.success("Login successful 🎉");
+      navigate("/");
     } catch (err) {
       const backendMessage =
         err.response?.data?.message ||
         "Something went wrong. Please try again.";
-      toast.error(backendMessage)
-      const backendErrors = err.response?.data?.errors || []
 
-      setError(backendMessage);
-      if (backendErrors.length > 0) {
-        setFieldErrors(backendErrors);
-
-        setTimeout(() => {
-          setFieldErrors([]);
-        }, 3000);
-      }
-
+      toast.error(backendMessage);
+      setFieldErrors(err.response?.data?.errors || []);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <>
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-300 to-indigo-100">
-        <div className="card w-full max-w-sm shadow-black shadow-lg bg-gradient-to-tr backdrop-blur-2xl  rounded-2xl">
-          <div className="card-body">
-            <h2 className='text-3xl  font-bold mb-3 text-gray-500 justify-center
-                 card-title'>Login</h2>
-            <form onSubmit={handleSubmit} >
-              <div>
-                <label htmlFor='email' className='block  mb-2 pb-1 font-medium text-xl text-gray-800 '>Enter your Email...</label>
-                <input
-                  className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-base-300 focus:border-base-300 outline-none transition-all focus:bg-white duration-400 placeholder-gray-400 text-gray-900'
-                  type='email'
-                  placeholder='exemple@gmail.com'
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor='password' className='block text-xl mb-b font-medium text-gray-800 mt-4 mb-2 '>Password</label>
-                <input
-                  className='w-full px-4 py-3 border border-gray-300
-                   focus:bg-white rounded-lg placeholder-gray-400 text-gray-900'
-                  type='password'
-                  placeholder='Enter your password'
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-              <button
-                type='submit'
-                className='btn block mt-6 w-full'
-                disabled={loading}> {loading ? "Logging in..." : "Login"}</button>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-300 to-indigo-100">
+      <div className="card w-full max-w-sm shadow-lg bg-white rounded-2xl">
+        <div className="card-body">
+          <h2 className="text-3xl font-bold mb-4 text-gray-600 flex justify-center items-center gap-2">
+            <LogIn /> Login
+          </h2>
 
-            </form>
-            {fieldErrors.length > 0 && (
-              <ul >
-                {
-                  fieldErrors.map((e, i) => (
-                    <li key={i} className='alert alert-error mt-4'>
-                      {e.field} : {e.message}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* EMAIL */}
+            <div className="relative">
+              <Mail className="absolute left-3 top-3 text-gray-400" size={20} />
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="input input-bordered w-full pl-10"
+                required
+              />
+            </div>
 
-                    </li>
-                  ))
-                }
-              </ul>
-            )}
-          </div>
+            <div className="relative">
+              <Lock className="absolute left-3 top-3 text-gray-400" size={20} />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="input input-bordered w-full pl-10"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-primary w-full flex items-center gap-2"
+              disabled={loading}
+            >
+              <LogIn size={18} />
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </form>
+
+          {fieldErrors.length > 0 && (
+            <ul className="mt-4 space-y-2">
+              {fieldErrors.map((e, i) => (
+                <li key={i} className="alert alert-error">
+                  {e.field} : {e.message}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <p className="text-center mt-4 text-sm">
+            Don’t have an account?
+            <Link to="/signup" className="text-blue-600 ml-1 hover:underline">
+              Signup
+            </Link>
+          </p>
         </div>
       </div>
-    </>
-  )
+    </div>
+  );
 }
 
-export default Login
+export default Login;

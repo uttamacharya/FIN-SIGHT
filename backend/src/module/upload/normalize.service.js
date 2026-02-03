@@ -1,17 +1,16 @@
 import { pool } from "../../config/db.js";
 import format from "pg-format";
 
-/* 
-   Utility: detect format
- */
+
+  //  Utility: detect format
+ 
 const detectFormat = (row) => {
   const numericKeys = Object.entries(row).filter(([_, v]) => !isNaN(v));
   return numericKeys.length > 1 ? "WIDE" : "LONG";
 };
 
-/* 
-   Utility: detect date key
-*/
+
+  //  Utility: detect date key
 const findDateKey = (row) => {
   return (
     Object.keys(row).find((k) => !isNaN(Date.parse(row[k]))) ||
@@ -38,9 +37,9 @@ const normalizeDate = (val) => {
   return null;
 };
 
-/*
-   MAIN NORMALIZATION (OPTIMIZED, SAME RESULT)
- */
+
+  //  Main Normalization ->Optimized same result
+ 
 export const normalizeUpload = async ({ uploadId, userId }) => {
   const client = await pool.connect();
 
@@ -54,7 +53,7 @@ export const normalizeUpload = async ({ uploadId, userId }) => {
 
     if (!rows.length) throw new Error("No data");
 
-    // 🔥 collect all inserts here
+    // collect all inserts here
     const transactions = [];
 
     for (const r of rows) {
@@ -66,7 +65,7 @@ export const normalizeUpload = async ({ uploadId, userId }) => {
 
       const formatType = detectFormat(row);
 
-      // WIDE FORMAT
+      // Wide formet
       if (formatType === "WIDE") {
         for (const [key, value] of Object.entries(row)) {
           if (key === dateKey) continue;
@@ -84,7 +83,7 @@ export const normalizeUpload = async ({ uploadId, userId }) => {
         }
       }
 
-      // LONG FORMAT
+      // Long formet
       else {
         const entries = Object.entries(row).filter(([_, v]) => !isNaN(v));
         if (!entries.length) continue;
@@ -103,7 +102,7 @@ export const normalizeUpload = async ({ uploadId, userId }) => {
       }
     }
 
-    // 🔥 ONE SINGLE INSERT (instead of thousands)
+    // One single insert (instead of thousands)
     if (transactions.length > 0) {
       const insertQuery = format(
         `

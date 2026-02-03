@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { uploadFileApi, getUploadApi } from "../api/upload.api"
+import { uploadFileApi, getUploadApi, deleteApi } from "../api/upload.api"
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 export const useUploads = () => {
@@ -47,12 +47,27 @@ export const useUploads = () => {
             setLoading(false)
         }
     }
+    const deleteFile= async(uploadId)=>{
+        try {
+            setLoading(true)
+            const res= await deleteApi(uploadId)
+            toast.success(res.data?.message || "File deletedd successfully");
+            await fetchUploads() //refresh after delete
+        } catch (error) {
+            const backendMessage=error.response?.data?.message ||"Delete failed"
+            setError(backendMessage)
+            toast.error(backendMessage)
+        }finally{
+            setLoading(false)
+        }
+    }
 
     return {
         uploads,
         loading,
         error,
         uploadFile,
+        deleteFile,
         fetchUploads
     }
 }
