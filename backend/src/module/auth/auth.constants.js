@@ -9,7 +9,7 @@ export const AUTH_CONSTANTS= {
     // redis key prefix (evoid collison)
     REDIS_REFRESH_TOKEN_PREFIX: "auth:refresh",
     REDIS_EMAIL_VERIFY_PREFIX: "auth:verify",
-    REDIS_RESET_PASSOWRD_PREFIX: "auth:reset",
+    REDIS_RESET_PASSWORD_PREFIX: "auth:reset",
 
     // redis expery
 

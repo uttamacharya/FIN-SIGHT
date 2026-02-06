@@ -40,13 +40,13 @@ function Signup() {
                 accessToken: res.data.accessToken
             })
             toast.success("Signup successful ")
-            Navigate("/login")
+            navigate("/login")
         } catch (error) {
             const backendMessage = error.response?.data?.message || "signup failed"
             toast.error(backendMessage)
             setFieldErrors(error.response?.data?.errors || []);
             const status = error.response?.status
-            if (status === 409 || message.toLowerCase().includes("exists")) {
+            if (status === 409 || backendMessage.toLowerCase().includes("exists")) {
                 setShowLoginOption(true);
             }
         } finally {

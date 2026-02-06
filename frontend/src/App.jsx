@@ -9,6 +9,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Analysis from "./pages/Analysis";
 import { useThemeStore } from "./utils/ThemeSelector/UseThemeStore";
+import ForgotPassword from "./pages/ForgotPassword";
+import OtpReset from "./pages/OtpReset";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -48,6 +51,18 @@ function App() {
               element={<Analysis />}
             />
           </Route>
+          <Route
+            path="/forgot-password"
+            element={<ForgotPassword/>}
+            ></Route>
+          <Route
+            path="/otp-reset"
+            element={<OtpReset/>}
+            ></Route>
+          <Route
+            path="/reset-password"
+            element={<ResetPassword/>}
+            ></Route>
         </Routes>
       </div>
 

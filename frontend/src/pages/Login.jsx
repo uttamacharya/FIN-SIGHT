@@ -101,6 +101,12 @@ function Login() {
               Signup
             </Link>
           </p>
+          <p className="text-center mt-4 text-sm">
+            forgot Password
+            <Link to="/forgot-password" className="text-blue-600 ml-1 hover:underline">
+              Forgot Password
+            </Link>
+          </p>
         </div>
       </div>
     </div>

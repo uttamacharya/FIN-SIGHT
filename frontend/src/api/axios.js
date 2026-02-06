@@ -11,7 +11,16 @@ let accessToken = null
 let isRefreshing = false
 let failedQueue = [];
 
-const AUTH_ROUTES = ["/auth/login", "/auth/refresh"];
+const PUBLIC_ROUTE = [
+    "/auth/login",
+    "/auth/signup",
+    "/auth/refresh",
+    "/auth/refresh",
+    "/auth/forget-password",
+    "/auth/request-otp",
+    "/auth/verify-otp",
+    "/auth/reset-password",
+];
 
 export const setAccessToken = (token) => {
     accessToken = token;
@@ -45,7 +54,7 @@ api.interceptors.response.use(
         const originalRequest = error.config;
         // Skip auth routes
         if (
-            AUTH_ROUTES.some((route) =>
+            PUBLIC_ROUTE.some((route) =>
                 originalRequest.url.includes(route)
             )
         ) {
