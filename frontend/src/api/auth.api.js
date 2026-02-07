@@ -20,9 +20,9 @@ export const verifyOtp=(payload)=>{
 }
 
 
-export const forgetPassword=(payload)=>{
-  return api.post("/auth/forget-password", payload)
-}
+// export const forgetPassword=(payload)=>{
+//   return api.post("/auth/forget-password", payload)
+// }
 
 export const resetPassword=(payload)=>{
   return api.post("/auth/reset-password", payload)

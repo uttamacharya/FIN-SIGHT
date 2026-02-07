@@ -1,7 +1,8 @@
 import express from 'express'
 import validate from '../../middlewares/validate.middlewere.js';
-import { forgetPasswordSchema, loginSchema, resetPasswordSchema, signUpSchema } from './auth.validation.js';
-import { login, signUp, refreshToken, logOut, forgetPassword, resetPassword, requestOtp, verifyOtp } from './auth.controller.js';
+import { loginSchema, resetPasswordSchema, signUpSchema } from './auth.validation.js';
+import { login, signUp, refreshToken, logOut, resetPassword, requestOtp, verifyOtp } from './auth.controller.js';
+import authMiddleware from '../../middlewares/auth.middleware.js';
 
 
 const router = express.Router();
@@ -19,14 +20,8 @@ router.post(
 )
 router.post("/refresh", refreshToken);
 
-router.delete("/logout", logOut)
+router.delete("/logout",authMiddleware, logOut)
 
-router.post(
-    "/forget-password",
-    validate(forgetPasswordSchema),
-    forgetPassword)
-
-    
 router.post(
     "/reset-password",
     validate(resetPasswordSchema),

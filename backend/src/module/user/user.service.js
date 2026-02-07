@@ -23,7 +23,7 @@ const getUserByIdService= async(userId)=>{
 
 // check if email already exist
 
-const checkUserByEmail= async({email})=>{
+const checkUserByEmail= async(email)=>{
     const user= await findUserByEmail(email)
     return user
 }

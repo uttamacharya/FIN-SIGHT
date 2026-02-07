@@ -43,7 +43,7 @@ export const forgetPasswordSchema = z.object({
 });
 
 export const resetPasswordSchema = z.object({
-    token: z.string().min(10),
+    token: z.string().min(10, "Invalid or expired token"),
     newPassword: z.string()
         .min(6, "Password must be at least 6 characters")
         .max(20, "Password must not exceed 20 characters")

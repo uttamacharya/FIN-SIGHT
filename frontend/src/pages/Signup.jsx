@@ -1,13 +1,14 @@
 import React from 'react'
 import { useState } from 'react'
 import { signUpApi } from '../api/auth.api'
-import { useAuth } from '../hooks/UseAuth'
+// import { useAuth } from '../hooks/UseAuth'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import { User, UserPlus, Mail, Lock } from "lucide-react"
 
 function Signup() {
-    const { signup } = useAuth()
+    const navigate = useNavigate()
+    // const { signup } = useAuth()
     const [form, setForm] = useState({
         name: "",
         email: "",
@@ -35,21 +36,24 @@ function Signup() {
         setLoading(true);
         try {
             const res = await signUpApi({ name, email, password })
-            signUp({
-                user: res.data.user,
-                accessToken: res.data.accessToken
-            })
             toast.success("Signup successful ")
             navigate("/login")
         } catch (error) {
-            const backendMessage = error.response?.data?.message || "signup failed"
-            toast.error(backendMessage)
+            const status = error.response?.status;
+            const backendMessage =
+                error.response?.data?.message || "Signup failed";
+
+            toast.error(backendMessage);
             setFieldErrors(error.response?.data?.errors || []);
-            const status = error.response?.status
-            if (status === 409 || backendMessage.toLowerCase().includes("exists")) {
+
+            if (
+                status === 409 ||
+                backendMessage.toLowerCase().includes("exists")
+            ) {
                 setShowLoginOption(true);
             }
-        } finally {
+        }
+        finally {
             setLoading(false)
         }
     }

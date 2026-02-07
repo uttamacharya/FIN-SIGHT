@@ -5,24 +5,18 @@ import { generateResetToken } from "../../utils/resetPasswordToken.js";
 import sendEmail from "../../config/mailer.js";
 import { findUserByEmail } from "../user/user.model.js";
 import { redis } from "../../config/redis.js";
+import { success } from "zod";
 // import { email, success } from "zod";
 // import { token } from "morgan";
 
 const signUp = async (req, res, next) => {
     try {
         const { name, email, password } = req.body;
-        const { user, accessToken, refreshToken } = await signupService({ name, email, password, is_email_verified: true })
+        const { user } = await signupService({ name, email, password, is_email_verified: true })
 
-        res.cookie(AUTH_CONSTANTS.REFRESH_TOKEN_COOKIE, refreshToken, {
-            httpOnly: true, //js can not eccess
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            maxAge: 30 * 24 * 60 * 60 * 1000
-        })
         res.status(201).json({
             success: true,
             message: "Signup successful",
-            accessToken,
             user
         });
     } catch (error) {
@@ -111,41 +105,6 @@ const logOut = async (req, res, next) => {
     }
 }
 
-// forget Password controller
-
-const forgetPassword = async (req, res, next) => {
-    try {
-        const { email } = req.body //and we can write email=req.body.email
-        if (!email) {
-            return res.status(400).json({
-                success: false,
-                message: "Email is required"
-            });
-        }
-        const token = await forgetPasswordService(email)
-        if (token) {
-            const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`
-
-            await sendEmail({
-                to: email,
-                subject: "Reset Your Password",
-                html: `
-             <p>Click below to reset your password:</p>
-             <a href="${resetLink}">Reset password</a>
-             <p>This link is expired in 15 minutes</p>
-            `
-            })
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "if email exists then i forgetReset link will share"
-        })
-    } catch (error) {
-        next(error)
-    }
-}
-
 // reset password
 const resetPassword = async (req, res, next) => {
     try {
@@ -206,7 +165,7 @@ const requestOtp = async (req, res, next) => {
         });
 
     } catch (error) {
-         next(error)
+        next(error)
     }
 }
 
@@ -228,15 +187,22 @@ const verifyOtp = async (req, res, next) => {
                 message: "OTP does not match"
             })
         }
-
-        await redis.set(
-            `otp-verified:${email}`,
-            "true",
-            "EX",
-            10 * 60 //10 minutes
-        )
-
         await redis.del(`otp:${email}`);
+
+        const token = await forgetPasswordService(email)
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+
+        // send reset link
+        await sendEmail({
+            to: email,
+            subject: "Reset your Password",
+            html: `
+               <p>OTP verified successfully</p>
+               <p>Click below to reset password</p>
+               <a href="${resetLink}">Reset Password</a>
+               <p>This link is valid for 5 minutes </p>
+            `
+        })
         res.status(200).json({
             success: true,
             message: "OTP verified successfully",
@@ -252,7 +218,6 @@ export {
     login,
     refreshToken,
     logOut,
-    forgetPassword,
     resetPassword,
     verifyOtp,
     requestOtp

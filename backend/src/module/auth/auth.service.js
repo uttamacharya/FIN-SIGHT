@@ -35,9 +35,11 @@ const generateTokens = (userId) => {
 const signupService = async ({ name, email, password, is_email_verified }) => {
     const existingUser = await checkUserByEmail(email)
     if (existingUser) {
-        throw new AppError("Users already exists with this email ID",409)
-
+        const err = new Error("User already exists with this email");
+        err.statusCode = 409;
+        throw err;
     }
+
 
     // other wise hash password
     const hashedPassword = await bcrypt.hash(
@@ -54,23 +56,9 @@ const signupService = async ({ name, email, password, is_email_verified }) => {
     });
 
     // generate token
-
-    const { accessToken, refreshToken } = generateTokens(user.id)
-
-    // store refresh token in redis
-    const redisKey = AUTH_CONSTANTS.REDIS_REFRESH_TOKEN_PREFIX + user.id
-
-    await redis.set(
-        redisKey,
-        refreshToken,
-        "EX",
-        30*24*60 * 60
-    )
     const { password: _, ...safeUser } = user;
     return {
-        user:safeUser,
-        accessToken,
-        refreshToken
+        user: safeUser
     }
 }
 
@@ -112,7 +100,7 @@ const loginService = async ({ email, password }) => {
         redisKey,
         refreshToken,
         "EX",
-        30*24*60 * 60
+        30 * 24 * 60 * 60
     )
 
     return {
@@ -123,18 +111,18 @@ const loginService = async ({ email, password }) => {
 
 }
 
-const logOutService= async(refreshToken)=>{
-    if(!refreshToken){
+const logOutService = async (refreshToken) => {
+    if (!refreshToken) {
         return
     }
-    const decoded= jwt.verify(
+    const decoded = jwt.verify(
         refreshToken,
         process.env.JWT_REFRESH_SECRET
     )
 
-    const userId=decoded.userId;
+    const userId = decoded.userId;
     // delete refresh token from redis
-    const redisKey=AUTH_CONSTANTS.REDIS_REFRESH_TOKEN_PREFIX+userId
+    const redisKey = AUTH_CONSTANTS.REDIS_REFRESH_TOKEN_PREFIX + userId
 
     await redis.del(redisKey);
 }
@@ -162,10 +150,10 @@ const refreshTokenService = async (refreshToken) => {
             process.env.JWT_ACCESS_SECRET,
             { expiresIn: AUTH_CONSTANTS.ACCESS_TOKEN_EXPIRY }
         )
-        const newRefreshToken= jwt.sign(
-            {userId},
+        const newRefreshToken = jwt.sign(
+            { userId },
             process.env.JWT_REFRESH_SECRET,
-            {expiresIn:AUTH_CONSTANTS.REFRESH_TOKEN_EXPIRY}
+            { expiresIn: AUTH_CONSTANTS.REFRESH_TOKEN_EXPIRY }
         )
 
         // OVERWRITE REDIS
@@ -173,9 +161,9 @@ const refreshTokenService = async (refreshToken) => {
             redisKey,
             newRefreshToken,
             "EX",
-            30*24*60*60
+            30 * 24 * 60 * 60
         )
-        return {newAccessToken, newRefreshToken}
+        return { newAccessToken, newRefreshToken }
     } catch (error) {
         const err = new Error("Refresh token expery or invalid")
         err.statusCode = 401
@@ -184,12 +172,12 @@ const refreshTokenService = async (refreshToken) => {
 }
 
 // gorget password service
-const forgetPasswordService=async(email)=>{
-    const user= await findUserByEmail(email)
-    if(!user) return;
+const forgetPasswordService = async (email) => {
+    const user = await findUserByEmail(email)
+    if (!user) return;
 
-    const token=generateResetToken();
-    const rediskey= `${AUTH_CONSTANTS.REDIS_RESET_PASSWORD_PREFIX}:${token}`
+    const token = generateResetToken();
+    const rediskey = `${AUTH_CONSTANTS.REDIS_RESET_PASSWORD_PREFIX}:${token}`
     await redis.set(
         rediskey,
         user.id,
@@ -200,13 +188,13 @@ const forgetPasswordService=async(email)=>{
 }
 
 // Reset-Password service
-const resetPasswordService=async ({token, newPassword})=>{
-    const redisKey=`${AUTH_CONSTANTS.REDIS_RESET_PASSWORD_PREFIX}:${token}`
-    const userId= await redis.get(redisKey);
-    if(!userId){
+const resetPasswordService = async ({ token, newPassword }) => {
+    const redisKey = `${AUTH_CONSTANTS.REDIS_RESET_PASSWORD_PREFIX}:${token}`
+    const userId = await redis.get(redisKey);
+    if (!userId) {
         throw new Error("Invalid or Expired token")
     }
-    const hashedPassword= await bcrypt.hash(
+    const hashedPassword = await bcrypt.hash(
         newPassword,
         AUTH_CONSTANTS.PASSWORD_SALT_ROUND
     );
