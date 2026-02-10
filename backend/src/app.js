@@ -52,11 +52,11 @@ app.use((req, res, next) => {
 });
 
 
-app.use(
-  helmet({
-    crossOriginResourcePolicy: false,
-  })
-);
+// app.use(
+//   helmet({
+//     crossOriginResourcePolicy: false,
+//   })
+// );
 
 app.use(morgan("dev"))
 
