@@ -8,7 +8,7 @@ import routes from "./routes/index.route.js"
 
 const app = express()
 
-/app.use(
+app.use(
   cors({
     origin: true,        // allow all origins
     credentials: true,
