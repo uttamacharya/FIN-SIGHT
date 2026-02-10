@@ -42,7 +42,12 @@ app.use((req, res, next) => {
 });
 
 
-app.use(helmet())
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  })
+);
+
 app.use(morgan("dev"))
 
 app.use(express.json())
