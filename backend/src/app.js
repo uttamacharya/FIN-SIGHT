@@ -10,7 +10,7 @@ const app = express()
 
 app.use((req, res, next) => {
   console.log(
-    "BEFORE CORS 👉",
+    "BEFORE CORS 👉 ->> ",
     req.method,
     req.url,
     "ORIGIN:",
@@ -18,33 +18,26 @@ app.use((req, res, next) => {
   );
   next();
 });
+// const allowedOrigins = [
+//   process.env.FRONTEND_URL?.replace(/\/$/, ""),
+//   "http://localhost:5173",
+// ];
+
 const allowedOrigins = [
-  process.env.FRONTEND_URL?.replace(/\/$/, ""),
   "http://localhost:5173",
+  process.env.FRONTEND_URL,
 ];
-app.use((req, res, next) => {
-  console.log(
-    "BEFORE CORS 👉",
-    req.method,
-    req.url,
-    "ORIGIN:",
-    req.headers.origin
-  );
-  next();
-});
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
 
-    const cleanOrigin = origin.replace(/\/$/, "");
-    if (allowedOrigins.includes(cleanOrigin)) {
-      return callback(null, true);
-    }
-    return callback(new Error("Not allowed by CORS"));
-  },
-  credentials: true,
-}));
+// MUST for preflight
+app.options("*", cors());
+
 app.use((req, res, next) => {
   console.log("REQ:", req.method, req.url, "ORIGIN:", req.headers.origin);
   next();
