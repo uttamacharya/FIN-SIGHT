@@ -8,6 +8,16 @@ import routes from "./routes/index.route.js"
 
 const app = express()
 
+app.use((req, res, next) => {
+  console.log(
+    "BEFORE CORS 👉",
+    req.method,
+    req.url,
+    "ORIGIN:",
+    req.headers.origin
+  );
+  next();
+});
 const allowedOrigins = [
   process.env.FRONTEND_URL?.replace(/\/$/, ""),
   "http://localhost:5173",
