@@ -2,15 +2,15 @@ import { pool } from "../../config/db.js";
 import format from "pg-format";
 
 
-  //  Utility: detect format
- 
+//  Utility: detect format
+
 const detectFormat = (row) => {
   const numericKeys = Object.entries(row).filter(([_, v]) => !isNaN(v));
   return numericKeys.length > 1 ? "WIDE" : "LONG";
 };
 
 
-  //  Utility: detect date key
+//  Utility: detect date key
 const findDateKey = (row) => {
   return (
     Object.keys(row).find((k) => !isNaN(Date.parse(row[k]))) ||
@@ -38,8 +38,8 @@ const normalizeDate = (val) => {
 };
 
 
-  //  Main Normalization ->Optimized same result
- 
+//  Main Normalization ->Optimized same result
+
 export const normalizeUpload = async ({ uploadId, userId }) => {
   const client = await pool.connect();
 
@@ -85,21 +85,35 @@ export const normalizeUpload = async ({ uploadId, userId }) => {
 
       // Long formet
       else {
-        const entries = Object.entries(row).filter(([_, v]) => !isNaN(v));
-        if (!entries.length) continue;
+        // find amount key
+        const amountKey = Object.keys(row).find(
+          (k) => !isNaN(row[k]) && k.toLowerCase() !== "date"
+        );
 
-        const [key, value] = entries[0];
+        if (!amountKey) continue;
+
+        const amount = Number(row[amountKey]);
+
+        // find category key (Category / category)
+        const categoryKey = Object.keys(row).find(
+          (k) => k.toLowerCase() === "category"
+        );
+
+        if (!categoryKey) continue;
+
+        const category = row[categoryKey];
 
         transactions.push([
           userId,
           uploadId,
           date,
-          Math.abs(Number(value)),
-          Number(value) >= 0 ? "income" : "expense",
-          key,
+          Math.abs(amount),
+          amount >= 0 ? "income" : "expense",
+          category,              // VALUE, not key
           JSON.stringify(row),
         ]);
       }
+
     }
 
     // One single insert (instead of thousands)
@@ -137,7 +151,7 @@ export const normalizeUpload = async ({ uploadId, userId }) => {
 
 // import { pool } from "../../config/db.js";
 
-// /* 
+// /*
 //    Utility: detect format
 //  */
 // const detectFormat = (row) => {
@@ -147,7 +161,7 @@ export const normalizeUpload = async ({ uploadId, userId }) => {
 //   return numericKeys.length > 1 ? "WIDE" : "LONG";
 // };
 
-// /* 
+// /*
 //    Utility: detect date key
 // */
 // const findDateKey = (row) => {

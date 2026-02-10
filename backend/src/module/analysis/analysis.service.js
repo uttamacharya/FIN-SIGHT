@@ -217,7 +217,10 @@ export const getAnalysisMetadata = async ({ uploadId, userId }) => {
     SELECT
       MIN(date) AS start_date,
       MAX(date) AS end_date,
-      ARRAY_AGG(DISTINCT category) AS categories
+      ARRAY_AGG(
+         DISTINCT lower(trim(category))
+        ORDER BY lower(trim(category))
+        ) AS categories
     FROM transactions
     WHERE upload_id=$1 AND user_id=$2
     `,

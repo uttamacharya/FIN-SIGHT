@@ -70,34 +70,34 @@ function OtpReset() {
                     <div className="card-body">
                         <h2 className="text-2xl font-bold text-gray-900  text-center mb-4">verify otp</h2>
                         <>
-                            <p className="text-sm text-gray-600 text-center">
-                                OTP sent to <span className="font-medium">{email}</span>
-                            </p>
-                            <input
-                                type="text"
-                                placeholder="Enter OTP"
-                                value={otp}
-                                className="input input-bordered w-full"
-                                onChange={(e) => setOtp(e.target.value)}
-                            />
+                         <p className="text-sm text-gray-600 text-center">
+                          OTP sent to <span className="font-medium">{email}</span>
+                       </p>
+                      <input
+                            type="text"
+                            placeholder="Enter OTP"
+                            value={otp}
+                            className="input input-bordered w-full"
+                            onChange={(e) => setOtp(e.target.value)}
+                        />
 
-                            <button
-                                className="btn btn-primary"
-                                onClick={handleVerifyOtp}
-                                disabled={loading} >
-                                {loading ? "verifying..." : "verify OTP"}
-                            </button>
-                            <button
-                                className="btn btn-link text-sm"
-                                onClick={handleResendOtp}
-                                disabled={cooldown > 0 || resendLoading}
-                            >
-                                {cooldown > 0
-                                    ? `Resend OTP in ${cooldown}s`
-                                    : resendLoading
-                                        ? "Resending..."
-                                        : "Resend OTP"}
-                            </button>
+                        <button
+                            className="btn btn-primary"
+                            onClick={handleVerifyOtp}
+                            disabled={loading} >
+                            {loading ? "verifying..." : "verify OTP"}
+                        </button>
+                        <button
+                            className="btn btn-link text-sm"
+                            onClick={handleResendOtp}
+                            disabled={cooldown > 0 || resendLoading}
+                         >
+                             {cooldown > 0
+                                 ? `Resend OTP in ${cooldown}s`
+                                 : resendLoading
+                                    ? "Resending..."
+                                    : "Resend OTP"}
+                         </button>
                         </>
                     </div>
                 </div>
