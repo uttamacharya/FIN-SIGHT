@@ -8,7 +8,7 @@ import routes from "./routes/index.route.js"
 
 const app = express()
 
-const allowedOrigins = ["http://localhost:5173", "http://localhost:3000"];
+const allowedOrigins = [process.env.FRONTEND_URL, "http://localhost:5173"];
 
 app.use(cors({
   origin: function (origin, callback) {
