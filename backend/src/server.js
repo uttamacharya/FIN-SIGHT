@@ -10,13 +10,13 @@ const PORT = process.env.PORT || 2005
 const startServer = async () => {
     try {
         await connectDB()
-        console.log("postgresql connected")
+        // console.log("postgresql connected")
 
         await connectRedis()
-        console.log(" Redis connected")
+        // console.log(" Redis connected")
 
         app.listen(PORT, () => {
-            console.log("server started")
+            // console.log("server started")
         })
     } catch (error) {
          console.error("server coneection failed")
