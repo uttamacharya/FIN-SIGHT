@@ -23,17 +23,27 @@ app.use((req, res, next) => {
 //   "http://localhost:5173",
 // ];
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  process.env.FRONTEND_URL,
-];
-console.log(allowedOrigins);
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // health checks / curl / server-to-server
+      if (!origin) return callback(null, true);
+
+      const allowedOrigins = [
+        "http://localhost:5173",                 // local
+        "https://fin-sight-chi-coral.vercel.app", // prod
+      ];
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(null, false); // do NOT throw error
+    },
     credentials: true,
   })
 );
+
 
 
 app.use((req, res, next) => {
