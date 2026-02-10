@@ -13,26 +13,18 @@ const allowedOrigins = [
   "http://localhost:5173",
 ];
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
 
-      // Vercel ke sab frontend allow
-      if (origin.includes(".vercel.app")) {
-        return callback(null, true);
-      }
-
-      // Localhost allow
-      if (origin === "http://localhost:5173") {
-        return callback(null, true);
-      }
-
-      return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-  })
-);
+    const cleanOrigin = origin.replace(/\/$/, "");
+    if (allowedOrigins.includes(cleanOrigin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+}));
 
 
 app.use(helmet())
