@@ -25,6 +25,10 @@ app.use(cors({
   },
   credentials: true,
 }));
+app.use((req, res, next) => {
+  console.log("REQ:", req.method, req.url, "ORIGIN:", req.headers.origin);
+  next();
+});
 
 
 app.use(helmet())
