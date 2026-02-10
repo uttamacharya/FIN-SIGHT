@@ -35,8 +35,6 @@ app.use(
   })
 );
 
-// MUST for preflight
-app.options("/*", cors());
 
 app.use((req, res, next) => {
   console.log("REQ:", req.method, req.url, "ORIGIN:", req.headers.origin);
