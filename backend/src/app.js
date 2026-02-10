@@ -8,20 +8,11 @@ import routes from "./routes/index.route.js"
 
 const app = express()
 
+/*Debug logger (safe) */
 app.use((req, res, next) => {
-  console.log(
-    "BEFORE CORS 👉 ->> ",
-    req.method,
-    req.url,
-    "ORIGIN:",
-    req.headers.origin
-  );
+  console.log("REQ:", req.method, req.url, "ORIGIN:", req.headers.origin);
   next();
 });
-// const allowedOrigins = [
-//   process.env.FRONTEND_URL?.replace(/\/$/, ""),
-//   "http://localhost:5173",
-// ];
 
 app.use(
   cors({
@@ -44,13 +35,22 @@ app.use(
   })
 );
 
-
-
 app.use((req, res, next) => {
-  console.log("REQ:", req.method, req.url, "ORIGIN:", req.headers.origin);
+  if (req.method === "OPTIONS") {
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization"
+    );
+    res.header(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS"
+    );
+    return res.sendStatus(204);
+  }
   next();
 });
-
 
 // app.use(
 //   helmet({
