@@ -69,7 +69,7 @@ const updateUserPasswordById=async ({userId, newPassword})=>{
       WHERE userId=$2
       RETURNING id, email
     `
-    const {rows}= await pool.query(auqry, [userId, newPassword]);
+    const {rows}= await pool.query(query, [userId, newPassword]);
 }
 export {
     createUser,
